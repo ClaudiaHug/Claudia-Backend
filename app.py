@@ -1,6 +1,6 @@
 # app.py
 # app.py
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 import time 
