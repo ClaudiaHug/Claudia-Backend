@@ -1,6 +1,7 @@
 # app.py
 # app.py
 from flask import Flask, jsonify, request
+from flask import send_file
 from flask_cors import CORS
 import requests
 import time 
@@ -42,6 +43,8 @@ def hello():
         
         #"Hello, World"
        # }
+
+
         
     
 
@@ -94,27 +97,34 @@ def generate_video():
     
     #SUBIR VIDEOA BLOB STORAGE 
     
-    blob_name = f"video_{int(datetime.utcnow().timestamp())}.mp4"
-    blob_service_client = BlobServiceClient.from_connection_string(CONNECT_STR)
-    blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=blob_name)
-    with open(output_path, "rb") as video_file:
-        blob_client.upload_blob(video_file, overwrite=True)
+    #blob_name = f"video_{int(datetime.utcnow().timestamp())}.mp4"
+    #blob_service_client = BlobServiceClient.from_connection_string(CONNECT_STR)
+    #blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=blob_name)
+    #with open(output_path, "rb") as video_file:
+        #blob_client.upload_blob(video_file, overwrite=True)
 
     
 # 5. Generar SAS token
-    sas_token = generate_blob_sas(
-        account_name=ACCOUNT_NAME,
-        container_name=CONTAINER_NAME,
-        blob_name=blob_name,
-        account_key=ACCOUNT_KEY,
-        permission=BlobSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
+    #sas_token = generate_blob_sas(
+     #   account_name=ACCOUNT_NAME,
+      #  container_name=CONTAINER_NAME,
+       # blob_name=blob_name,
+        #account_key=ACCOUNT_KEY,
+       # permission=BlobSasPermissions(read=True),
+       # expiry=datetime.utcnow() + timedelta(hours=1)
+    #)
     
-    final_url = f"https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{blob_name}?{sas_token}"
+    #final_url = f"https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{blob_name}?{sas_token}"
+    return jsonify({"videoUrl": f"http://localhost:5000/output.mp4"})
+   
 
-    return jsonify({"videoUrl": final_url})
+    #return jsonify({"videoUrl": final_url})
 
+
+#ROUTE TO SERVE THE VIDEO FILE LOCALLY FOR TESTING
+app.get("/output.mp4")
+def serve_video():
+     return send_file("output.mp4", mimetype="video/mp4", as_attachment=True, download_name="video.mp4")
 
 
 if __name__ == "__main__":
