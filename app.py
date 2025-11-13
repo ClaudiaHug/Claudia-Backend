@@ -20,6 +20,7 @@ CONNECT_STR = "DefaultEndpointsProtocol=https;AccountName=stclaudiastoragevideo;
 ACCOUNT_NAME = "stclaudiastoragevideo"
 ACCOUNT_KEY = "KCQkkWCTJFxWTTl3a1aX/V6bKc5BwmcblsA2szvzbh0JvtzY6QJyLadeftultrQPX9euOUbbRxif+AStvRD/pw=="
 CONTAINER_NAME = "videos"
+BASE_URL = os.getenv("BASE_URL", "https://app-claudia-test2-brbmcmbvaebvadhc.spaincentral-01.azurewebsites.net")
 
 #AZURE Storage Configuration para hacerlo con variables de entorno
 
@@ -114,8 +115,10 @@ def generate_video():
        # expiry=datetime.utcnow() + timedelta(hours=1)
     #)
     
+    
     #final_url = f"https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{blob_name}?{sas_token}"
-    return jsonify({"videoUrl": f"http://localhost:5000/output.mp4"})
+    #return jsonify({"videoUrl": f"http://localhost:5000/output.mp4"})
+    return jsonify({"videoUrl": f"{BASE_URL}/output.mp4"})
    
 
     #return jsonify({"videoUrl": final_url})
