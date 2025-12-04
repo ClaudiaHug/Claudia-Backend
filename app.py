@@ -16,7 +16,7 @@ CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://lo
 
 
 # ⚠️ Hardcoded credentials (solo para pruebas)
-CONNECT_STR = "DefaultEndpointsProtocol=https;AccountName=stclaudiastoragevideo;AccountKey=KCQkkWCTJFxWTTl3a1aX/V6bKc5BwmcblsA2szvzbh0JvtzY6QJyLadeftultrQPX9euOUbbRxif+AStvRD/pw==;EndpointSuffix=core.windows.net"
+CONNECT_STR = "DefaultEndpointsProtocol=https;AccountName=stclaudiastoragevideo;AccountKey=KCQkkWCTJFxWTTl3a1aX/V6bKc5BwmcblsA2szvzbh0JvtzY6QJyLadeftultrQPX9euOUbbRxif+AStvRD/pw==;EndpointSuffix=core.windows.net" #de la key1
 ACCOUNT_NAME = "stclaudiastoragevideo"
 ACCOUNT_KEY = "KCQkkWCTJFxWTTl3a1aX/V6bKc5BwmcblsA2szvzbh0JvtzY6QJyLadeftultrQPX9euOUbbRxif+AStvRD/pw=="
 CONTAINER_NAME = "videos"
@@ -25,7 +25,6 @@ BASE_URL = os.getenv("BASE_URL", "https://app-claudia-test2-brbmcmbvaebvadhc.spa
 #AZURE Storage Configuration para hacerlo con variables de entorno
 
 #CONNECT_STR = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
-#CONTAINER_NAME = "videos"
 #ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
 #ACCOUNT_KEY = os.getenv('AZURE_STORAGE_ACCOUNT_KEY')
 
@@ -98,30 +97,31 @@ def generate_video():
     
     #SUBIR VIDEOA BLOB STORAGE 
     
-    #blob_name = f"video_{int(datetime.utcnow().timestamp())}.mp4"
-    #blob_service_client = BlobServiceClient.from_connection_string(CONNECT_STR)
-    #blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=blob_name)
-    #with open(output_path, "rb") as video_file:
-        #blob_client.upload_blob(video_file, overwrite=True)
+    blob_name = f"video_{int(datetime.utcnow().timestamp())}.mp4"
+    blob_service_client = BlobServiceClient.from_connection_string(CONNECT_STR)
+    blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=blob_name)
+    with open(output_path, "rb") as video_file:
+        blob_client.upload_blob(video_file, overwrite=True)
 
     
 # 5. Generar SAS token
-    #sas_token = generate_blob_sas(
-     #   account_name=ACCOUNT_NAME,
-      #  container_name=CONTAINER_NAME,
-       # blob_name=blob_name,
-        #account_key=ACCOUNT_KEY,
-       # permission=BlobSasPermissions(read=True),
-       # expiry=datetime.utcnow() + timedelta(hours=1)
-    #)
+    sas_token = generate_blob_sas(
+     account_name=ACCOUNT_NAME,
+        container_name=CONTAINER_NAME,
+        blob_name=blob_name,
+        account_key=ACCOUNT_KEY,
+        permission=BlobSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
     
-    
-    #final_url = f"https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{blob_name}?{sas_token}"
+   
+    final_url = f"https://{ACCOUNT_NAME}.blob.core.windows.net/{CONTAINER_NAME}/{blob_name}?{sas_token}"
+    return jsonify({"videoUrl": final_url})
     #return jsonify({"videoUrl": f"http://localhost:5000/output.mp4"})
-    return jsonify({"videoUrl": f"{BASE_URL}/output.mp4"})
+    #return jsonify({"videoUrl": f"{BASE_URL}/output.mp4"})
    
 
-    #return jsonify({"videoUrl": final_url})
+
 
 
 #ROUTE TO SERVE THE VIDEO FILE LOCALLY FOR TESTING
